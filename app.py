@@ -1,5 +1,5 @@
 from flask import Flask, request
-
+import os
 from pipeline import run_doc_pipeline
 
 app = Flask(__name__)
