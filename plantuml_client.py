@@ -57,20 +57,37 @@ def normalize_plantuml(source: str) -> str:
         text = f"{text}\n@enduml"
     return text
 
-
 def fetch_png(plantuml_source: str) -> bytes:
-    """Render PlantUML source to PNG via public plantuml.com API."""
+
     normalized = normalize_plantuml(plantuml_source)
+
     encoded = plantuml_encode(normalized)
+
     url = f"{PLANTUML_ENCODE_URL}/{encoded}"
 
-    response = requests.get(url, timeout=90)
-    print(f"  PlantUML render: {response.status_code} (url len {len(url)})")
+    print("\nPLANTUML URL:")
+    print(url)
 
-    if response.status_code != 200:
-        raise RuntimeError(f"PlantUML API failed: {response.text[:200]}")
+    response = requests.get(url, timeout=90)
+
+    print("\nSTATUS:")
+    print(response.status_code)
+
+    print("\nCONTENT TYPE:")
+    print(response.headers.get("Content-Type"))
+
+    print("\nFIRST 50 BYTES:")
+    print(response.content[:50])
+
+    print("\nFIRST 500 CHARS:")
+    try:
+        print(response.text[:500])
+    except Exception:
+        print("Cannot decode response text")
 
     if not response.content.startswith(b"\x89PNG"):
-        raise RuntimeError("PlantUML did not return valid PNG data")
+        raise RuntimeError(
+            "PlantUML did not return valid PNG data"
+        )
 
     return response.content
