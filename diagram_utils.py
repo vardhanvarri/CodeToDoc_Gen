@@ -3,21 +3,24 @@ import re
 
 from plantuml_client import normalize_plantuml
 
+### these funcitons are to validate the response from grok and make simplifications to detect when multiple diagrams are there.
+
+
 VALID_DIAGRAM_TYPES = {"architecture", "workflow", "sequence", "dataflow", "component"}
 
-
+### change name to remove spaces
 def slugify_filename(text: str, max_len: int = 40) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", text.lower()).strip("-")
     return (slug or "diagram")[:max_len]
 
-
+### unique name for each diagram
 def attachment_filename(mr_iid, diagram: dict, index: int) -> str:
     """Stable PNG name per MR + diagram (upsert on Confluence re-runs)."""
     name_slug = slugify_filename(str(diagram.get("name", f"diagram-{index}")))
     type_slug = slugify_filename(str(diagram.get("type", "diagram")), max_len=20)
     return f"mr-{mr_iid}-{type_slug}-{name_slug}.png"
 
-
+### as name suggests checking syntax for the response from groq
 def validate_diagrams(diagrams):
     errors = []
 

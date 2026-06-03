@@ -7,6 +7,7 @@ from config import PLANTUML_BASE_URL
 
 PLANTUML_ENCODE_URL = f"{PLANTUML_BASE_URL}/png"
 
+#PlantUML uses its own encoding scheme so we need to change the current UML syntax to encoded code.
 
 def encode6bit(b: int) -> str:
     if b < 10:
@@ -40,13 +41,15 @@ def encode64(data: bytes) -> str:
 
 
 def plantuml_encode(source: str) -> str:
+    #sometimes the code can be large so we need to reduce the size and [2:-4] is compressed code part
     compressed = zlib.compress(source.encode("utf-8"), 9)[2:-4]
     return encode64(compressed)
 
-
+## Remove unnecessary prefix and suffix
 def normalize_plantuml(source: str) -> str:
     """Ensure valid PlantUML block from LLM output."""
     text = source.strip()
+    ## some times grok returns in format ```json``` so we need to remove them 
     text = re.sub(r"^```(?:plantuml)?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"\s*```$", "", text)
     text = text.strip()
@@ -56,21 +59,37 @@ def normalize_plantuml(source: str) -> str:
     if "@enduml" not in text.lower():
         text = f"{text}\n@enduml"
     return text
-
-
 def fetch_png(plantuml_source: str) -> bytes:
-    """Render PlantUML source to PNG via public plantuml.com API."""
+
     normalized = normalize_plantuml(plantuml_source)
+
     encoded = plantuml_encode(normalized)
+
     url = f"{PLANTUML_ENCODE_URL}/{encoded}"
 
-    response = requests.get(url, timeout=90)
-    print(f"  PlantUML render: {response.status_code} (url len {len(url)})")
+    print("\nPLANTUML URL:")
+    print(url)
 
-    if response.status_code != 200:
-        raise RuntimeError(f"PlantUML API failed: {response.text[:200]}")
+    response = requests.get(url, timeout=90)
+
+    print("\nSTATUS:")
+    print(response.status_code)
+
+    print("\nCONTENT TYPE:")
+    print(response.headers.get("Content-Type"))
+
+    print("\nFIRST 50 BYTES:")
+    print(response.content[:50])
+
+    print("\nFIRST 500 CHARS:")
+    try:
+        print(response.text[:500])
+    except Exception:
+        print("Cannot decode response text")
 
     if not response.content.startswith(b"\x89PNG"):
-        raise RuntimeError("PlantUML did not return valid PNG data")
+        raise RuntimeError(
+            "PlantUML did not return valid PNG data"
+        )
 
     return response.content

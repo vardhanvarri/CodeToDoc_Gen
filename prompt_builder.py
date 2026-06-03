@@ -55,9 +55,9 @@ Comment:
         for discussion in mr_details["discussions"]
     )
 
-    _write_debug_file(output_dir, "commits.txt", commit_section)
-    _write_debug_file(output_dir, "diffs.txt", files_section)
-    _write_debug_file(output_dir, "discussions.txt", discussions_section)
+    # _write_debug_file(output_dir, "commits.txt", commit_section)
+    # _write_debug_file(output_dir, "diffs.txt", files_section)
+    # _write_debug_file(output_dir, "discussions.txt", discussions_section)
 
     prompt = f"""
 You are a senior software architect.
@@ -163,6 +163,6 @@ Dev -> ServiceA: action
 - Be concise but technically detailed.
 """
 
-    _write_debug_file(output_dir, "final_prompt.txt", prompt)
-    print(f"Prompt written to {output_dir / 'final_prompt.txt'}")
+   # _write_debug_file(output_dir, "final_prompt.txt", prompt)
+    #print(f"Prompt written to {output_dir / 'final_prompt.txt'}")
     return prompt
