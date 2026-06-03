@@ -16,7 +16,7 @@ def fetch_complete_mr_details(project_id, mr_iid):
         timeout=60,
     )
     print("\nMR STATUS:", mr_response.status_code)
-
+ ### check 
     if mr_response.status_code != 200:
         print("Failed to fetch MR")
         return None
@@ -54,6 +54,7 @@ def fetch_complete_mr_details(project_id, mr_iid):
     )
     print("\nDISCUSSIONS STATUS:", discussions_response.status_code)
 
+    ## data Minimization (Refractoring)
     discussions = []
     if discussions_response.status_code == 200:
         for discussion in discussions_response.json():
@@ -67,6 +68,7 @@ def fetch_complete_mr_details(project_id, mr_iid):
 
     print(f"Discussions fetched: {len(discussions)}")
 
+    ## data Minimization (Refractoring)
     files_changed = []
     for change in changes:
         files_changed.append(

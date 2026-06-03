@@ -41,7 +41,7 @@ def run_doc_pipeline(project_id, mr_iid):
     raw_result = generate_documentation(final_prompt)
     if raw_result is None:
         return False, "Groq generation failed"
-
+### parse the response into main doc and UML diagram syntax
     try:
         documentation_html, diagrams = parse_documentation_response(raw_result)
     except (json.JSONDecodeError, KeyError) as exc:

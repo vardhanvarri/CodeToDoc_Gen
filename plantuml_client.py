@@ -7,6 +7,7 @@ from config import PLANTUML_BASE_URL
 
 PLANTUML_ENCODE_URL = f"{PLANTUML_BASE_URL}/png"
 
+#PlantUML uses its own encoding scheme so we need to change the current UML syntax to encoded code.
 
 def encode6bit(b: int) -> str:
     if b < 10:
@@ -40,13 +41,15 @@ def encode64(data: bytes) -> str:
 
 
 def plantuml_encode(source: str) -> str:
+    #sometimes the code can be large so we need to reduce the size and [2:-4] is compressed code part
     compressed = zlib.compress(source.encode("utf-8"), 9)[2:-4]
     return encode64(compressed)
 
-
+## Remove unnecessary prefix and suffix
 def normalize_plantuml(source: str) -> str:
     """Ensure valid PlantUML block from LLM output."""
     text = source.strip()
+    ## some times grok returns in format ```json``` so we need to remove them 
     text = re.sub(r"^```(?:plantuml)?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"\s*```$", "", text)
     text = text.strip()
