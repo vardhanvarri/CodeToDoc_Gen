@@ -1,5 +1,5 @@
 from flask import Flask, request
-
+import os
 from pipeline import run_doc_pipeline
 
 app = Flask(__name__)
@@ -53,3 +53,10 @@ def gitlab_webhook():
 
 
 application = app
+
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
+    )
