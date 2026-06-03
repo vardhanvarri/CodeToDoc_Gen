@@ -59,6 +59,7 @@ def normalize_plantuml(source: str) -> str:
     if "@enduml" not in text.lower():
         text = f"{text}\n@enduml"
     return text
+
 def fetch_png(plantuml_source: str) -> bytes:
 
     normalized = normalize_plantuml(plantuml_source)

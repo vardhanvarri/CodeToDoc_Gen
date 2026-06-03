@@ -1,8 +1,9 @@
 import threading
 import os
 from flask import Flask, request
-
+import os
 from pipeline import run_doc_pipeline
+import threading
 
 app = Flask(__name__)
 
