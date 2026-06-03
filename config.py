@@ -20,9 +20,15 @@ CONFLUENCE_SITE = os.getenv("CONFLUENCE_SITE", "https://sprinklr.atlassian.net")
 CONFLUENCE_BASE_URL = os.getenv(
     "CONFLUENCE_BASE_URL", f"{CONFLUENCE_SITE}/wiki/api/v2"
 )
+CONFLUENCE_ATTACHMENT_UPLOAD = os.getenv(
+    "CONFLUENCE_ATTACHMENT_UPLOAD",
+    f"{CONFLUENCE_SITE}/wiki/rest/api/content",
+)
 CONFLUENCE_EMAIL = os.getenv("CONFLUENCE_EMAIL", "")
 CONFLUENCE_API_TOKEN = os.getenv("CONFLUENCE_API_TOKEN", "")
 CONFLUENCE_PAGE_ID = os.getenv("CONFLUENCE_PAGE_ID", "6217925321")
+
+PLANTUML_BASE_URL = os.getenv("PLANTUML_BASE_URL", "https://www.plantuml.com/plantuml")
 
 DIFF_PREVIEW_LIMIT = int(os.getenv("DIFF_PREVIEW_LIMIT", "2000"))
 
@@ -33,23 +39,9 @@ JSON_OUTPUT_SCHEMA = """
   "diagrams": [
     {
       "name": "string",
-      "type": "architecture | workflow | sequence | dataflow",
+      "type": "architecture | workflow | sequence | dataflow | component",
       "description": "string",
-      "nodes": [
-        {
-          "id": "string",
-          "label": "string",
-          "kind": "service | module | actor | datastore"
-        }
-      ],
-      "edges": [
-        {
-          "source": "string",
-          "target": "string",
-          "label": "string",
-          "kind": "calls | reads | writes | emits"
-        }
-      ]
+      "plantuml": "string (full PlantUML source between @startuml and @enduml)"
     }
   ]
 }
