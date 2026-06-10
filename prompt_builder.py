@@ -55,16 +55,16 @@ Comment:
         for discussion in mr_details["discussions"]
     )
 
-    _write_debug_file(output_dir, "commits.txt", commit_section)
-    _write_debug_file(output_dir, "diffs.txt", files_section)
-    _write_debug_file(output_dir, "discussions.txt", discussions_section)
+    # _write_debug_file(output_dir, "commits.txt", commit_section)
+    # _write_debug_file(output_dir, "diffs.txt", files_section)
+    # _write_debug_file(output_dir, "discussions.txt", discussions_section)
 
     prompt = f"""
 You are a senior software architect.
 
 You must produce TWO outputs in one JSON object:
 1) documentation_html — Confluence HTML prose (sections 1–12)
-2) diagrams — structured graph models (NOT prose duplicates of sections 8–11)
+2) diagrams — PlantUML source for each diagram (rendered to PNG and embedded in Confluence)
 
 Return ONLY valid JSON matching the schema below. No text before or after.
 
@@ -127,25 +127,34 @@ Updated At:
 11. Data Flow Explanation
 12. Suggested Documentation Improvements
 
-# DIAGRAM RULES (diagrams array — required)
+# DIAGRAM RULES (diagrams array — required, PlantUML)
 
 - Include 1 to 3 diagrams only.
-- Types: "architecture" (components), "workflow" (steps), "sequence" (ordered interactions), "dataflow" (data movement).
-- Every diagram must include "name", "type", "description", "nodes", and "edges".
-- Every node "id" must be a lowercase slug derived from a real file, module, class, or function in the diffs (e.g. "compiler_codegen", "error_detector").
-- Every node "label" must be a human-readable name for that same entity.
-- Optional node "kind": service, module, actor, or datastore.
-- Every edge source/target must match an existing node id.
-- Optional edge "kind": calls, reads, writes, or emits.
-- Do not invent services, APIs, or files not present in the MR context.
-- If the MR context is insufficient for a diagram type, omit that diagram instead of guessing.
-- "description" on each diagram: one sentence tying it to this MR.
+- Each diagram must have: "name", "type", "description", "plantuml".
+- "plantuml" must be complete PlantUML source starting with @startuml and ending with @enduml.
+- Use the best PlantUML diagram style for the type:
+  - sequence: use actor/participant and arrows (->, -->)
+  - architecture / component: use component, package, or rectangle nodes
+  - workflow / dataflow: use activity or flowchart syntax where appropriate
+- Use real module, file, service, and function names from the MR diffs and discussions.
+- Do not invent components not evidenced in the MR context.
+- Keep each diagram readable (roughly 5–12 elements); add a title line inside PlantUML.
+- Optional: add "hide footbox" and "skinparam style strictuml" at the top for cleaner sequence diagrams.
+- If context is insufficient for a diagram type, omit that diagram instead of guessing.
+
+Example plantuml shape (adapt content to this MR):
+@startuml
+title Example
+actor Dev
+participant ServiceA
+Dev -> ServiceA: action
+@enduml
 
 # DOCUMENTATION_HTML RULES
 
 - Cover sections 1–12 as h1/h2 and paragraphs/lists.
-- Sections 8–11 should describe behavior in prose; do NOT duplicate full diagram markup in HTML.
-- End documentation_html with a short h2 "Diagrams" and one sentence that structured diagram data is included below in the published page appendix.
+- Sections 8–11 describe behavior in prose only; do NOT put PlantUML or diagram images inside documentation_html.
+- Do NOT add a Diagrams section in documentation_html — diagrams are published separately as PNG attachments.
 - If discussions are empty, state "No MR discussions" under Decision Rationale; do not invent decisions.
 - If unsure about a claim, say "Not evident from the diff" instead of guessing.
 - Focus on engineering understanding.
@@ -154,6 +163,6 @@ Updated At:
 - Be concise but technically detailed.
 """
 
-    _write_debug_file(output_dir, "final_prompt.txt", prompt)
-    print(f"Prompt written to {output_dir / 'final_prompt.txt'}")
+   # _write_debug_file(output_dir, "final_prompt.txt", prompt)
+    #print(f"Prompt written to {output_dir / 'final_prompt.txt'}")
     return prompt
