@@ -164,6 +164,6 @@ Dev -> ServiceA: action
 """
 
     print("=========================")
-    print(f"Prompt : {prompt}")
+    print(f"Prompt : {prompt[:2000]}")
     print("=========================")
     return prompt
