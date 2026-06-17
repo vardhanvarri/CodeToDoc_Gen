@@ -163,6 +163,7 @@ Dev -> ServiceA: action
 - Be concise but technically detailed.
 """
 
-   # _write_debug_file(output_dir, "final_prompt.txt", prompt)
-    #print(f"Prompt written to {output_dir / 'final_prompt.txt'}")
+    print("=========================")
+    print(f"Prompt : {prompt}")
+    print("=========================")
     return prompt
